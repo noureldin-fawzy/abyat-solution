@@ -1,6 +1,7 @@
 package com.abyat.solution.service.impl;
 
 import com.abyat.solution.model.HandballRatingPoints;
+import com.abyat.solution.model.payload.BasePlayer;
 import com.abyat.solution.model.payload.HandballPlayer;
 import com.abyat.solution.repository.HandballRatingPointsDao;
 import com.abyat.solution.service.Sport;
@@ -13,7 +14,6 @@ import java.util.Map;
 @Slf4j
 public class Handball extends SportAbstract implements Sport {
 
-
     @Override
     public Map<String, Integer> process(List<String> match) {
         List<String> playersStr = getPlayers(match);
@@ -22,7 +22,6 @@ public class Handball extends SportAbstract implements Sport {
 
         return extractPlayersFromTeams();
     }
-
 
     private void handlePlayersPoints(List<String> players) {
         players.forEach(this::processPlayer);
@@ -39,24 +38,6 @@ public class Handball extends SportAbstract implements Sport {
         log.info("Player {}, points {}", player.getNickname(), playerTotalPoints);
         handleTeamsMap(player, playerTotalPoints);
         return playerTotalPoints;
-    }
-
-    private void handleTeamsMap(HandballPlayer player, int playerTotalPoints) {
-        if (teams.containsKey(player.getTeamName())) {
-            Map<String, Integer> teamMembers = teams.get(player.getTeamName());
-
-            if (teamMembers.containsKey(player.getNickname())) {
-                Integer oldPoints = teamMembers.get(player.getNickname());
-                teamMembers.replace(player.getNickname(), oldPoints + playerTotalPoints);
-            } else {
-                teamMembers.put(player.getNickname(), playerTotalPoints);
-            }
-
-        } else {
-            Map<String, Integer> member = new HashMap<>();
-            member.put(player.getNickname(), playerTotalPoints);
-            teams.put(player.getTeamName(), member);
-        }
     }
 
     private HandballPlayer preparePlayerObject(String playerStr) {

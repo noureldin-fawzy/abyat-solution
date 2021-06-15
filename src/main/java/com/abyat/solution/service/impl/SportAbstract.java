@@ -1,5 +1,6 @@
 package com.abyat.solution.service.impl;
 
+import com.abyat.solution.model.payload.BasePlayer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -20,6 +21,24 @@ public class SportAbstract {
         Map<String, Integer> players = new HashMap<>();
         teams.forEach((k, v) -> v.forEach((name, points) -> players.put(name, points)));
         return players;
+    }
+
+    protected void handleTeamsMap(BasePlayer player, int playerTotalPoints) {
+        if (teams.containsKey(player.getTeamName())) {
+            Map<String, Integer> teamMembers = teams.get(player.getTeamName());
+
+            if (teamMembers.containsKey(player.getNickname())) {
+                Integer oldPoints = teamMembers.get(player.getNickname());
+                teamMembers.replace(player.getNickname(), oldPoints + playerTotalPoints);
+            } else {
+                teamMembers.put(player.getNickname(), playerTotalPoints);
+            }
+
+        } else {
+            Map<String, Integer> member = new HashMap<>();
+            member.put(player.getNickname(), playerTotalPoints);
+            teams.put(player.getTeamName(), member);
+        }
     }
 
     protected void handleWinnerTeam() {
